@@ -1,15 +1,31 @@
 package com.example;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 /**
  * Model layer: encapsulates application data and business logic.
  */
 public class HelloModel {
-    /**
-     * Returns a greeting based on the current Java and JavaFX versions.
-     */
-    public String getGreeting() {
-        String javaVersion = System.getProperty("java.version");
-        String javafxVersion = System.getProperty("javafx.version");
-        return "Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".";
+
+    private StringProperty userInputProperty;
+
+    public HelloModel() {
+        userInputProperty = new SimpleStringProperty();
     }
+
+
+    public String getUserInput() {
+        return userInputProperty.get();
+    }
+
+    public StringProperty userInputProperty() {
+        return userInputProperty;
+    }
+
+    public void setUserInput(String userInput) {
+        userInputProperty.set(userInput);
+    }
+
+
 }

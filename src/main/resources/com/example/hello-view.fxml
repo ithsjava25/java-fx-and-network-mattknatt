@@ -8,13 +8,25 @@
         <bottom>
             <HBox alignment="BASELINE_CENTER" styleClass="chat-input">
                 <TextArea fx:id="messageInput" text="Skriv ett meddelande..."
-                prefRowCount="2"
-                >
-                </TextArea>
+                prefRowCount="2"/>
                 <Button text="Skicka" onAction="#sendMessage"/>
             </HBox>
         </bottom>
+        <center>
+            <ScrollPane fx:id="chatScrollPane" styleClass="chat-display">
+                <VBox fx:id="chatMessages">
+                    <Label fx:id="messageLabel"/>
+
+
+                </VBox>
+
+            </ScrollPane>
+        </center>
+        <left>
+            <VBox>
+
+            </VBox>
+        </left>
 
     </BorderPane>
-    <Label fx:id="messageLabel" text="Hello, JavaFX!" />
 </StackPane>

@@ -1,10 +1,13 @@
 package com.example;
 
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 
 /**
  * Controller layer: mediates between the view (FXML) and the model.
@@ -14,15 +17,28 @@ public class HelloController {
     private final HelloModel model = new HelloModel();
 
     @FXML
-    private TextArea messageInput;
+    private VBox chatMessages;
 
-    private boolean showingPlaceholder = true;
+    @FXML
+    private ScrollPane chatScrollPane;
 
     @FXML
     private Label messageLabel;
 
     @FXML
+    private TextArea messageInput;
+
+    private boolean showingPlaceholder = true;
+
+    public StringProperty userInputProperty() {
+        return model.userInputProperty();
+    }
+
+
+    @FXML
     private void initialize() {
+        messageLabel.textProperty().bind(userInputProperty());
+
         setPlaceholder();
         
         messageInput.setOnKeyPressed(event -> {
@@ -30,18 +46,11 @@ public class HelloController {
                clearPlaceholder();
            }
         });
-
         messageInput.setOnMouseClicked(event -> {
             if ( showingPlaceholder) {
                 clearPlaceholder();
             }
         });
-
-
-
-//        if (messageLabel != null) {
-//            messageLabel.setText(model.getGreeting());
-//        }
     }
 
     private void clearPlaceholder() {
@@ -57,10 +66,13 @@ public class HelloController {
     }
 
     public void sendMessage(ActionEvent actionEvent) {
-        String userInput = messageInput.getText();
+        model.setUserInput(messageInput.getText());
+        if (showingPlaceholder || messageInput.getText().isEmpty()) {
+            return;
+        }
+        model.setUserInput(messageInput.getText());
 
         messageInput.clear();
-
 
     }
 }
