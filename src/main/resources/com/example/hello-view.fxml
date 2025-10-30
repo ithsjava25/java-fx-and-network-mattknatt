@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.control.Label?>
 
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.BorderPane?>
-<StackPane stylesheets="@../../css/style.css" alignment="CENTER" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.HelloController">
-    <Label fx:id="messageLabel" text="Hello, JavaFX!"/>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane stylesheets="@../../css/style.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.HelloController">
+    <BorderPane>
+        <bottom>
+            <HBox alignment="BASELINE_CENTER" styleClass="chat-input">
+                <TextArea fx:id="messageInput" text="Skriv ett meddelande..."
+                prefRowCount="2"
+                >
+                </TextArea>
+                <Button text="Skicka" onAction="#sendMessage"/>
+            </HBox>
+        </bottom>
+
+    </BorderPane>
+    <Label fx:id="messageLabel" text="Hello, JavaFX!" />
 </StackPane>

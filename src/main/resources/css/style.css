@@ -3,3 +3,8 @@
     -fx-background-size: cover;
 
 }
+.chat-input {
+    -fx-padding: 5;
+    -fx-spacing: 2;
+}
+
