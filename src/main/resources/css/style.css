@@ -1,0 +1,5 @@
+.root {
+    -fx-background-image: url("../blue_abstract_background.png");
+    -fx-background-size: cover;
+
+}
