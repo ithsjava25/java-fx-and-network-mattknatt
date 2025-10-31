@@ -65,12 +65,16 @@ public class HelloController {
 
     public void sendMessage(ActionEvent actionEvent) {
         String message = messageInput.getText();
-
         if (showingPlaceholder || message.isEmpty()) {
             return;
         }
         model.setUserInput(message);
+        createMessageBubble(message);
+        messageInput.clear();
+        setPlaceholder();
+    }
 
+    private void createMessageBubble(String message) {
         HBox messageContainer = new HBox();
         messageContainer.setAlignment(Pos.CENTER_LEFT);
         Label messageBubble = new Label(message);
@@ -81,7 +85,5 @@ public class HelloController {
         messageBubble.setPrefWidth(Label.USE_COMPUTED_SIZE);
         messageContainer.getChildren().add(messageBubble);
         chatMessages.getChildren().add(messageContainer);
-        messageInput.clear();
-
     }
 }

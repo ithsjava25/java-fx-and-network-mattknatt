@@ -14,18 +14,9 @@
         </bottom>
         <center>
             <ScrollPane fx:id="chatScrollPane" styleClass="chat-display">
-                <VBox fx:id="chatMessages" styleClass="chat-display">
-
-
-                </VBox>
+                <VBox fx:id="chatMessages" styleClass="chat-display"/>
 
             </ScrollPane>
         </center>
-        <left>
-            <VBox>
-
-            </VBox>
-        </left>
-
     </BorderPane>
 </StackPane>
