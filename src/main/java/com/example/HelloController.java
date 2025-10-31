@@ -3,10 +3,12 @@ package com.example;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 /**
@@ -23,9 +25,6 @@ public class HelloController {
     private ScrollPane chatScrollPane;
 
     @FXML
-    private Label messageLabel;
-
-    @FXML
     private TextArea messageInput;
 
     private boolean showingPlaceholder = true;
@@ -37,7 +36,6 @@ public class HelloController {
 
     @FXML
     private void initialize() {
-        messageLabel.textProperty().bind(userInputProperty());
 
         setPlaceholder();
         
@@ -66,12 +64,23 @@ public class HelloController {
     }
 
     public void sendMessage(ActionEvent actionEvent) {
-        model.setUserInput(messageInput.getText());
-        if (showingPlaceholder || messageInput.getText().isEmpty()) {
+        String message = messageInput.getText();
+
+        if (showingPlaceholder || message.isEmpty()) {
             return;
         }
-        model.setUserInput(messageInput.getText());
+        model.setUserInput(message);
 
+        HBox messageContainer = new HBox();
+        messageContainer.setAlignment(Pos.CENTER_LEFT);
+        Label messageBubble = new Label(message);
+        messageBubble.getStyleClass().add("chat-bubble");
+        messageBubble.setWrapText(true);
+        messageBubble.setMaxWidth(300);
+        messageBubble.setMinWidth(Label.USE_PREF_SIZE);
+        messageBubble.setPrefWidth(Label.USE_COMPUTED_SIZE);
+        messageContainer.getChildren().add(messageBubble);
+        chatMessages.getChildren().add(messageContainer);
         messageInput.clear();
 
     }
