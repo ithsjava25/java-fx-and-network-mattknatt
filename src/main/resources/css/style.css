@@ -15,7 +15,7 @@
 }
 
 .chat-bubble-sent {
-    -fx-background-color: #5b9ef3;
+    -fx-background-color: #d8d8d8;
     -fx-background-radius: 10;
     -fx-padding: 8 12 8 12;
     -fx-font-size: 13;
@@ -24,7 +24,7 @@
 }
 
 .chat-bubble-received {
-    -fx-background-color: #cfcfcf;
+    -fx-background-color: #218aff;
     -fx-background-radius: 10;
     -fx-padding: 8 12 8 12;
     -fx-font-size: 13;
