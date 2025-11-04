@@ -13,10 +13,12 @@
             </HBox>
         </bottom>
         <center>
-            <ScrollPane fx:id="chatScrollPane" styleClass="chat-display">
+            <ScrollPane fx:id="chatScrollPane" styleClass="chat-display" fitToWidth="true">
                 <VBox fx:id="chatMessages" styleClass="chat-display"/>
+
 
             </ScrollPane>
         </center>
+
     </BorderPane>
 </StackPane>
