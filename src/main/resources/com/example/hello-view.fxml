@@ -7,14 +7,14 @@
     <BorderPane>
         <bottom>
             <HBox alignment="BASELINE_CENTER" styleClass="chat-input">
-                <TextArea fx:id="textArea" text="Skriv ett meddelande..."
-                          prefRowCount="2"/>
-                <Button text="Skicka" onAction="#sendMessage"/>
+                <TextArea fx:id="textArea" prefRowCount="2" text="Skriv ett meddelande..." />
+                <Button onAction="#sendMessage" text="Skicka" />
+            <Button fx:id="fileChooser" onAction="#attachFile" text="Bifoga fil.." />
             </HBox>
         </bottom>
         <center>
-            <ScrollPane fx:id="chatScrollPane" styleClass="chat-display" fitToWidth="true" fitToHeight="true">
-                <VBox fx:id="messageBox" styleClass="chat-display"/>
+            <ScrollPane fx:id="chatScrollPane" fitToHeight="true" fitToWidth="true" styleClass="chat-display">
+                <VBox fx:id="messageBox" styleClass="chat-display" />
 
 
             </ScrollPane>

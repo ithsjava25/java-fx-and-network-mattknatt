@@ -1,13 +1,19 @@
 package com.example;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
+
+import java.io.File;
 
 /**
  * Controller layer: mediates between the view (FXML) and the model.
@@ -15,6 +21,9 @@ import javafx.scene.layout.VBox;
 public class HelloController {
 
     private final HelloModel model = new HelloModel(new NtfyConnectionImpl());
+
+    @FXML
+    private Button fileChooser;
 
     @FXML
     private VBox messageBox;
@@ -104,5 +113,15 @@ public class HelloController {
         messageContainer.setMaxWidth(Double.MAX_VALUE);
         messageContainer.getChildren().add(messageBubbleLeft);
         messageBox.getChildren().add(messageContainer);
+    }
+
+    public void attachFile(ActionEvent actionEvent) {
+
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Välj fil att bifoga...");
+
+        Window window = textArea.getScene().getWindow();
+        var selectedFile = fc.showOpenDialog(window);
+
     }
 }
