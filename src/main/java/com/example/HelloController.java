@@ -81,9 +81,9 @@ public class HelloController {
         if (showingPlaceholder || message.isEmpty()) {
             return;
         }
+        sentMessageBubble(message);
         model.setMessageToSend(message);
         model.sendMessage();
-        sentMessageBubble(message);
         textArea.clear();
         setPlaceholder();
     }

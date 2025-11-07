@@ -6,6 +6,8 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.concurrent.CompletableFuture;
+
 
 /**
  * Model layer: encapsulates application data and business logic.
@@ -23,9 +25,10 @@ public class HelloModel {
 //        receiveMessage();
     }
 
-    public void sendMessage() {
-        connection.send(messageToSend.get());
+    public CompletableFuture<Boolean> sendMessage() {
+        return connection.send(messageToSend.get());
     }
+
 
     public void receiveMessage() {
         connection.receive(m ->

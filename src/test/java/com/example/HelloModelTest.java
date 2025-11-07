@@ -10,6 +10,8 @@ import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.CompletableFuture;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 @WireMockTest
@@ -39,13 +41,26 @@ class HelloModelTest {
         stubFor(post("/mytopic")
                 .willReturn(ok()));
 
-        model.sendMessage();
+        model.sendMessage().join();
 
         //Verify call made to server
 
         verify(postRequestedFor(urlEqualTo("/mytopic"))
                 .withRequestBody(containing("Hello World")));
+    }
+    
+    @Test
+    void receiveMessageShouldStoreIncomingMessages() {
+        var spy = new NtfyConnectionSpy();
+        var model = new HelloModel(spy);
 
+        spy.receive(m -> model.getMessages().add(m));
 
+        spy.simulateIncomingMessages("Hello World");
+
+        assertThat(model.getMessages()).hasSize(1);
+        assertThat(model.getMessages().getFirst().message()).isEqualTo("Hello World");
+
+        
     }
 }

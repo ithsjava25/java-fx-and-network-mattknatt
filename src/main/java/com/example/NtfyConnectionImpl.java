@@ -10,6 +10,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class NtfyConnectionImpl implements NtfyConnection {
@@ -28,25 +29,25 @@ public class NtfyConnectionImpl implements NtfyConnection {
     }
 
     @Override
-    public boolean send(String message) {
+    public CompletableFuture<Boolean> send(String message) {
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(message))
                 .uri(URI.create(hostName + "/mytopic"))
                 .build();
 
-        try {
+
             //Todo: handle long blocking send requests to not freeze the JavaFX thread
             //1. Use thread send message?
             //2. Use async?
-            var response = http.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-
-            return true;
-        } catch (IOException e) {
-            System.out.println("Error sending message");
-        } catch (InterruptedException e) {
-            System.out.println("Interrupted sending message");
-        }
-        return false;
+            return http.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString())
+                    .thenApply(response -> {
+                        int code = response.statusCode();
+                        return code == 200 || code == 201;
+                    })
+                    .exceptionally(e -> {
+                        System.err.println("Send failed: " + e.getMessage());
+                        return false;
+                    });
     }
 
     @Override
