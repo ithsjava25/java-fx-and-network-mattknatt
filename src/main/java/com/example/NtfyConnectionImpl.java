@@ -4,6 +4,8 @@ import io.github.cdimascio.dotenv.Dotenv;
 import javafx.application.Platform;
 import tools.jackson.databind.ObjectMapper;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -48,6 +50,19 @@ public class NtfyConnectionImpl implements NtfyConnection {
                         System.err.println("Send failed: " + e.getMessage());
                         return false;
                     });
+    }
+
+    @Override
+    public CompletableFuture<Boolean> sendFile(File file) throws FileNotFoundException {
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .PUT(HttpRequest.BodyPublishers.ofFile(file.toPath()))
+                .uri(URI.create(hostName + "/mytopic"))
+                .header("Filename", file.getName())
+                .build();
+
+        return http.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString())
+                .thenApply(response -> response.statusCode() == 200);
+
     }
 
     @Override

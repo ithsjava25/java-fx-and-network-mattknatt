@@ -1,5 +1,7 @@
 package com.example;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -18,6 +20,11 @@ public class NtfyConnectionSpy implements NtfyConnection {
     public void receive(Consumer<NtfyMessageDto> messageHandler) {
         this.messageHandler = messageHandler;
 
+    }
+
+    @Override
+    public CompletableFuture<Boolean> sendFile(File file) throws FileNotFoundException {
+        return null;
     }
 
     public void simulateIncomingMessages(String message) {

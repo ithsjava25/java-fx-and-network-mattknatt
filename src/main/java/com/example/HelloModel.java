@@ -6,6 +6,8 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -13,6 +15,9 @@ import java.util.concurrent.CompletableFuture;
  * Model layer: encapsulates application data and business logic.
  */
 public class HelloModel {
+
+
+    private File attachedFile;
 
     private final NtfyConnection connection;
 
@@ -27,6 +32,10 @@ public class HelloModel {
 
     public CompletableFuture<Boolean> sendMessage() {
         return connection.send(messageToSend.get());
+    }
+
+    public CompletableFuture<Boolean> sendFile() throws FileNotFoundException {
+        return connection.sendFile(getAttachedFile());
     }
 
 
@@ -52,5 +61,12 @@ public class HelloModel {
         this.messageToSend.set(messageToSend);
     }
 
+    public File getAttachedFile() {
+        return attachedFile;
+    }
+
+    public void setAttachedFile(File attachedFile) {
+        this.attachedFile = attachedFile;
+    }
 }
 

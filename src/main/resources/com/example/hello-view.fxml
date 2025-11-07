@@ -7,6 +7,7 @@
     <BorderPane>
         <bottom>
             <HBox alignment="BASELINE_CENTER" styleClass="chat-input">
+                <VBox fx:id="attachedFilesBox"/>
                 <TextArea fx:id="textArea" prefRowCount="2" text="Skriv ett meddelande..." />
                 <Button onAction="#sendMessage" text="Skicka" />
             <Button fx:id="fileChooser" onAction="#attachFile" text="Bifoga fil.." />

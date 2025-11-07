@@ -1,5 +1,6 @@
 package com.example;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -14,6 +15,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * Controller layer: mediates between the view (FXML) and the model.
@@ -21,6 +23,9 @@ import java.io.File;
 public class HelloController {
 
     private final HelloModel model = new HelloModel(new NtfyConnectionImpl());
+
+    @FXML
+    private VBox attachedFilesBox;
 
     @FXML
     private Button fileChooser;
@@ -76,11 +81,24 @@ public class HelloController {
         showingPlaceholder = true;
     }
 
-    public void sendMessage() {
+    public void sendMessage() throws FileNotFoundException {
+        if (model.getAttachedFile() != null) {
+            model.sendFile().thenAccept(fileSent -> {
+                if (fileSent) {
+                    Platform.runLater(() -> {
+                        sentMessageBubble(model.getAttachedFile().getName());
+                        model.setAttachedFile(null);
+                        attachedFilesBox.getChildren().clear();
+
+                    });
+                }
+            });
+        }
         String message = textArea.getText();
         if (showingPlaceholder || message.isEmpty()) {
             return;
         }
+
         sentMessageBubble(message);
         model.setMessageToSend(message);
         model.sendMessage();
@@ -117,11 +135,24 @@ public class HelloController {
 
     public void attachFile(ActionEvent actionEvent) {
 
-        FileChooser fc = new FileChooser();
-        fc.setTitle("Välj fil att bifoga...");
+        FileChooser fileChooser = new FileChooser();
 
-        Window window = textArea.getScene().getWindow();
-        var selectedFile = fc.showOpenDialog(window);
+        File selectedFile = fileChooser.showOpenDialog(textArea.getScene().getWindow());
+        if (selectedFile != null) {
+            model.setAttachedFile(selectedFile);
+            Label fileLabel = new Label("📎 " + selectedFile.getName());
+            Button removeFileButton = new Button("❌");
+            removeFileButton.setOnAction(event -> {
+                attachedFilesBox.getChildren().clear();
+                model.setAttachedFile(null);
+            });
+            attachedFilesBox.getChildren().add(fileLabel);
+            attachedFilesBox.getChildren().add(removeFileButton);
+        }
+
+
+
+
 
     }
 }
