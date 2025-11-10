@@ -12,7 +12,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Window;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -49,7 +48,7 @@ public class HelloController {
             while (change.next()) {
                 if (change.wasAdded()) {
                     for (var msg : change.getAddedSubList()) {
-                        receivedMessageBubble(msg.message());
+                        sentMessageBubble(msg.message());
                     }
                 }
             }
@@ -86,7 +85,7 @@ public class HelloController {
             model.sendFile().thenAccept(fileSent -> {
                 if (fileSent) {
                     Platform.runLater(() -> {
-                        sentMessageBubble(model.getAttachedFile().getName());
+                        receivedMessageBubble(model.getAttachedFile().getName());
                         model.setAttachedFile(null);
                         attachedFilesBox.getChildren().clear();
 
@@ -99,26 +98,26 @@ public class HelloController {
             return;
         }
 
-        sentMessageBubble(message);
+        receivedMessageBubble(message);
         model.setMessageToSend(message);
         model.sendMessage();
         textArea.clear();
         setPlaceholder();
     }
 
-    private void sentMessageBubble(String message) {
-        HBox messageContainer = new HBox();
-        messageContainer.setAlignment(Pos.CENTER_LEFT);
-        Label messageBubble = new Label(message);
-        messageBubble.getStyleClass().add("chat-bubble-sent");
-        msgBubbleFormatter(messageContainer, messageBubble);
-    }
-
     private void receivedMessageBubble(String message) {
         HBox messageContainer = new HBox();
         messageContainer.setAlignment(Pos.CENTER_RIGHT);
+        Label messageBubble = new Label(message);
+        messageBubble.getStyleClass().add("chat-bubble-received");
+        msgBubbleFormatter(messageContainer, messageBubble);
+    }
+
+    private void sentMessageBubble(String message) {
+        HBox messageContainer = new HBox();
+        messageContainer.setAlignment(Pos.CENTER_LEFT);
         Label messageBubbleLeft = new Label(message);
-        messageBubbleLeft.getStyleClass().add("chat-bubble-received");
+        messageBubbleLeft.getStyleClass().add("chat-bubble-sent");
         msgBubbleFormatter(messageContainer, messageBubbleLeft);
     }
 
