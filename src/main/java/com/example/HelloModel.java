@@ -86,7 +86,10 @@ public class HelloModel {
     }
 
     public String getMessageToSend() {
-        return messageToSend.get();
+        if(getUserName().isEmpty()) {
+            return messageToSend.get();
+        } else
+            return getUserName() + ": " + messageToSend.get();
     }
 
     public StringProperty messageToSendProperty() {

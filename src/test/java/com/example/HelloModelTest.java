@@ -29,6 +29,7 @@ class HelloModelTest {
         //Arrange   Given
         var spy = new NtfyConnectionSpy();
         var model = new HelloModel(spy);
+        model.setUserName("");
         model.setMessageToSend("Hello World");
         //Act   When
         model.sendMessage();
@@ -54,6 +55,8 @@ class HelloModelTest {
         model.setUserName("user");
         model.setMessageToSend("Hello World");
 
+        model.sendMessage();
+
         assertThat(spy.message).isEqualTo("user: Hello World");
 
     }
@@ -72,6 +75,7 @@ class HelloModelTest {
     void sendMessageToFakeServer(WireMockRuntimeInfo wireMockRuntimeInfo) {
         var con = new NtfyConnectionImpl("http://localhost:" + wireMockRuntimeInfo.getHttpPort());
         var model = new HelloModel(con);
+        model.setUserName("user");
         model.setMessageToSend("Hello World");
         stubFor(post("/mytopic")
                 .willReturn(ok()));
@@ -81,7 +85,7 @@ class HelloModelTest {
         //Verify call made to server
 
         verify(postRequestedFor(urlEqualTo("/mytopic"))
-                .withRequestBody(containing("Hello World")));
+                .withRequestBody(containing("user: Hello World")));
     }
 
     @Test
@@ -158,7 +162,7 @@ class HelloModelTest {
         var attachment = new NtfyMessageDto.Attachment(
                 "http://example.com/files/test.jpg",
                 "test.jpg",
-                "image/plain"
+                "image/jpeg"
         );
 
         var dto = new NtfyMessageDto("id1", 10101010L, "message", "mytopic", "File received", attachment);

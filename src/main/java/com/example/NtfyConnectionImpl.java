@@ -34,7 +34,6 @@ public class NtfyConnectionImpl implements NtfyConnection {
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(message))
                 .uri(URI.create(hostName + "/mytopic"))
-//                .header("Tags", userName)
                 .build();
 
 

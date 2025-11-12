@@ -115,7 +115,7 @@ public class HelloController {
         }
 
         sentMessageBubble(message);
-        model.setMessageToSend(model.getUserName() + ": " + message);
+        model.setMessageToSend(message);
         model.sendMessage();
         textArea.clear();
         setPlaceholder();
