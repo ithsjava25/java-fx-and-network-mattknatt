@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 public class NtfyConnectionSpy implements NtfyConnection {
 
     String message;
+    File sentFile;
     public Consumer<NtfyMessageDto> messageHandler;
 
     @Override
@@ -24,11 +25,15 @@ public class NtfyConnectionSpy implements NtfyConnection {
 
     @Override
     public CompletableFuture<Boolean> sendFile(File file) throws FileNotFoundException {
-        return null;
+        this.sentFile = file;
+        if (file == null || !file.exists()) {
+            throw new FileNotFoundException("File not found" + file);
+        }
+        return CompletableFuture.completedFuture(true);
     }
 
     public void simulateIncomingMessages(String message) {
-        var dto = new NtfyMessageDto("id1", 0L, "message", "mytopic", message);
+        var dto = new NtfyMessageDto("id1", 0L, "message", "mytopic", message, null);
         messageHandler.accept(dto);
 
     }

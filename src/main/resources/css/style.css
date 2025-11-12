@@ -21,7 +21,7 @@
     -fx-spacing: 5;
 }
 
-.chat-bubble-sent {
+.chat-bubble-received {
     -fx-background-color: #d8d8d8;
     -fx-background-radius: 10;
     -fx-padding: 8 12 8 12;
@@ -30,7 +30,7 @@
     -fx-max-width: 300;
 }
 
-.chat-bubble-received {
+.chat-bubble-sent {
     -fx-background-color: #218aff;
     -fx-background-radius: 10;
     -fx-padding: 8 12 8 12;

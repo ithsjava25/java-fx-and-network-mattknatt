@@ -6,8 +6,10 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URI;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -56,13 +58,15 @@ public class HelloModel {
 
         connection.receive(m -> {
             try {
+                if(m.message() != null && m.message().startsWith(getUserName() + ": ")) {
+                    return;
+                }
                 if (Platform.isFxApplicationThread()) {
                     messages.add(m);
                 } else {
                     try {
                         Platform.runLater(() -> messages.add(m));
                     } catch (IllegalStateException e) {
-                        // Ingen JavaFX-plattform aktiv — lägg till direkt
                         messages.add(m);
                     }
                 }
@@ -99,6 +103,14 @@ public class HelloModel {
 
     public void setAttachedFile(File attachedFile) {
         this.attachedFile = attachedFile;
+    }
+
+    public void openUrl(String url) {
+        try {
+            Desktop.getDesktop().browse(new URI(url));
+        } catch (Exception e) {
+            System.out.println("Failed to open url: " + url);
+        }
     }
 }
 

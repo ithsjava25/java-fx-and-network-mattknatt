@@ -43,7 +43,7 @@ public class HelloController {
             while (change.next()) {
                 if (change.wasAdded()) {
                     for (var msg : change.getAddedSubList()) {
-                        sentMessageBubble(msg.message());
+                        receivedMessageBubble(msg);
                     }
                 }
             }
@@ -101,7 +101,7 @@ public class HelloController {
             model.sendFile().thenAccept(fileSent -> {
                 if (fileSent) {
                     Platform.runLater(() -> {
-                        receivedMessageBubble(model.getAttachedFile().getName());
+                        sentMessageBubble(model.getAttachedFile().getName());
                         model.setAttachedFile(null);
                         attachedFilesBox.getChildren().clear();
 
@@ -114,30 +114,49 @@ public class HelloController {
             return;
         }
 
-        receivedMessageBubble(message);
-        model.setMessageToSend(message);
+        sentMessageBubble(message);
+        model.setMessageToSend(model.getUserName() + ": " + message);
         model.sendMessage();
         textArea.clear();
         setPlaceholder();
     }
 
-    private void receivedMessageBubble(String message) {
+    private void receivedMessageBubble(NtfyMessageDto dto) {
         HBox messageContainer = new HBox();
-        messageContainer.setAlignment(Pos.CENTER_RIGHT);
-        Label messageBubble = new Label(message);
+        messageContainer.setAlignment(Pos.CENTER_LEFT);
+
+        if (dto.attachment() != null && dto.attachment().url() != null) {
+            Hyperlink link = new Hyperlink(dto.attachment().name());
+            link.setOnAction(e -> model.openUrl(dto.attachment().url()));
+            link.getStyleClass().add("chat-bubble-received");
+            msgBubbleFormatter(messageContainer, link);
+            return;
+        }
+        Label messageBubble = new Label(dto.message());
         messageBubble.getStyleClass().add("chat-bubble-received");
         msgBubbleFormatter(messageContainer, messageBubble);
     }
 
     private void sentMessageBubble(String message) {
         HBox messageContainer = new HBox();
-        messageContainer.setAlignment(Pos.CENTER_LEFT);
+        messageContainer.setAlignment(Pos.CENTER_RIGHT);
         Label messageBubbleLeft = new Label(message);
         messageBubbleLeft.getStyleClass().add("chat-bubble-sent");
         msgBubbleFormatter(messageContainer, messageBubbleLeft);
     }
 
     private void msgBubbleFormatter(HBox messageContainer, Label messageBubbleLeft) {
+        messageBubbleLeft.setWrapText(true);
+        messageBubbleLeft.setMaxWidth(300);
+        messageBubbleLeft.setMinWidth(Label.USE_PREF_SIZE);
+        messageBubbleLeft.setPrefWidth(Label.USE_COMPUTED_SIZE);
+        HBox.setHgrow(messageContainer, Priority.ALWAYS);
+        messageContainer.setMaxWidth(Double.MAX_VALUE);
+        messageContainer.getChildren().add(messageBubbleLeft);
+        messageBox.getChildren().add(messageContainer);
+    }
+
+    private void msgBubbleFormatter(HBox messageContainer, Hyperlink messageBubbleLeft) {
         messageBubbleLeft.setWrapText(true);
         messageBubbleLeft.setMaxWidth(300);
         messageBubbleLeft.setMinWidth(Label.USE_PREF_SIZE);
