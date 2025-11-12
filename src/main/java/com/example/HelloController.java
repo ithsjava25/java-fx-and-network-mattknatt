@@ -4,14 +4,13 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,13 +26,7 @@ public class HelloController {
     private VBox attachedFilesBox;
 
     @FXML
-    private Button fileChooser;
-
-    @FXML
     private VBox messageBox;
-
-    @FXML
-    private ScrollPane chatScrollPane;
 
     @FXML
     private TextArea textArea;
@@ -43,6 +36,8 @@ public class HelloController {
     @FXML
     private void initialize() {
         setPlaceholder();
+
+        Platform.runLater(this::showWelcomeWindow);
 
           model.getMessages().addListener((javafx.collections.ListChangeListener<NtfyMessageDto>) change -> {
             while (change.next()) {
@@ -65,6 +60,27 @@ public class HelloController {
                 clearPlaceholder();
             }
         });
+
+    }
+
+    private void showWelcomeWindow() {
+        Stage welcomeWindow = new Stage();
+        welcomeWindow.setTitle("Välkommen!");
+
+        VBox vBox = new VBox(10);
+        vBox.setAlignment(Pos.CENTER);
+        Label label = new Label("Skriv in ditt namn: ");
+        TextField nameField = new TextField();
+        Button okButton = new Button("OK");
+        okButton.setOnAction(event -> {
+            model.setUserName(nameField.getText());
+            welcomeWindow.close();
+        });
+
+        vBox.getChildren().addAll(label, nameField, okButton);
+        welcomeWindow.setScene(new Scene(vBox, 250, 100));
+        welcomeWindow.show();
+
 
     }
 

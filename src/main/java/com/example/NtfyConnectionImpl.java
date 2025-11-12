@@ -1,12 +1,10 @@
 package com.example;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import javafx.application.Platform;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -24,6 +22,7 @@ public class NtfyConnectionImpl implements NtfyConnection {
     public NtfyConnectionImpl() {
         Dotenv dotenv = Dotenv.load();
         hostName = Objects.requireNonNull(dotenv.get("HOST_NAME"));
+
     }
 
     public NtfyConnectionImpl(String hostName) {
@@ -35,6 +34,7 @@ public class NtfyConnectionImpl implements NtfyConnection {
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(message))
                 .uri(URI.create(hostName + "/mytopic"))
+//                .header("Tags", userName)
                 .build();
 
 
@@ -66,13 +66,13 @@ public class NtfyConnectionImpl implements NtfyConnection {
     }
 
     @Override
-    public void receive(Consumer<NtfyMessageDto> messageHandler) {
+    public CompletableFuture<Void> receive(Consumer<NtfyMessageDto> messageHandler) {
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create(hostName + "/mytopic/json?since=10m"))
+                .uri(URI.create(hostName + "/mytopic/json"))
                 .build();
 
-        http.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofLines())
+        return http.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofLines())
                 .thenAccept(response -> response.body()
                         .map(s ->
                                 mapper.readValue(s, NtfyMessageDto.class))

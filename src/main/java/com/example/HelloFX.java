@@ -15,7 +15,7 @@ public class HelloFX extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloFX.class.getResource("hello-view.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, 720, 480);
-        stage.setTitle("Instant messenger");
+        stage.setTitle("ITHS Instant Messenger");
         stage.setScene(scene);
         stage.show();
     }

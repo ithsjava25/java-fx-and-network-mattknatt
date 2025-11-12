@@ -63,4 +63,27 @@ class HelloModelTest {
 
         
     }
+
+    @Test
+    void receiveMessageFromFakeServer(WireMockRuntimeInfo wireMockRuntimeInfo) {
+        var con = new NtfyConnectionImpl("http://localhost:" + wireMockRuntimeInfo.getHttpPort());
+        var model = new HelloModel(con);
+
+        String jsonMessage = """
+                {"id":"abc123","time":17000000,"event":"message","topic":"mytopic","message":"Hello World"}
+                """;
+
+        stubFor(get(urlEqualTo("/mytopic/json"))
+                .willReturn(okForContentType("application/json", jsonMessage)));
+
+        model.receiveMessage().join();
+
+
+        assertThat(model.getMessages()).hasSize(1);
+        var dto = model.getMessages().getFirst();
+        assertThat(dto.message()).isEqualTo("Hello World");
+
+        verify(getRequestedFor(urlEqualTo("/mytopic/json")));
+
+    }
 }

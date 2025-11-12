@@ -25,23 +25,55 @@ public class HelloModel {
 
     private final StringProperty messageToSend = new SimpleStringProperty();
 
+    private final StringProperty userName = new SimpleStringProperty();
+
     public HelloModel(NtfyConnection connection) {
         this.connection = connection;
-//        receiveMessage();
     }
 
     public CompletableFuture<Boolean> sendMessage() {
-        return connection.send(messageToSend.get());
+        return connection.send(getMessageToSend());
     }
 
     public CompletableFuture<Boolean> sendFile() throws FileNotFoundException {
         return connection.sendFile(getAttachedFile());
     }
 
+    public void setUserName(String userName) {
+        this.userName.setValue(userName);
+    }
 
-    public void receiveMessage() {
-        connection.receive(m ->
-                Platform.runLater(() -> messages.add(m)));
+    public String getUserName() {
+        return userName.get();
+    }
+
+    public StringProperty userNameProperty() {
+        return userName;
+    }
+
+    public CompletableFuture<Void> receiveMessage() {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+
+        connection.receive(m -> {
+            try {
+                if (Platform.isFxApplicationThread()) {
+                    messages.add(m);
+                } else {
+                    try {
+                        Platform.runLater(() -> messages.add(m));
+                    } catch (IllegalStateException e) {
+                        // Ingen JavaFX-plattform aktiv — lägg till direkt
+                        messages.add(m);
+                    }
+                }
+                // Markera framtiden som klar när första meddelandet tas emot
+                future.complete(null);
+            } catch (Exception e) {
+                future.completeExceptionally(e);
+            }
+        });
+
+        return future;
     }
 
 

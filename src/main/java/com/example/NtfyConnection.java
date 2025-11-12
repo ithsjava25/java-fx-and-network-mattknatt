@@ -9,7 +9,7 @@ public interface NtfyConnection {
 
     public CompletableFuture<Boolean> send(String message);
 
-    public void receive(Consumer<NtfyMessageDto> messageHandler);
+    public CompletableFuture<Void> receive(Consumer<NtfyMessageDto> messageHandler);
 
     public CompletableFuture<Boolean> sendFile(File file) throws FileNotFoundException;
 }

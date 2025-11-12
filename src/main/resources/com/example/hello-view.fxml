@@ -10,11 +10,11 @@
                 <VBox fx:id="attachedFilesBox"/>
                 <TextArea fx:id="textArea" prefRowCount="2" text="Skriv ett meddelande..." />
                 <Button onAction="#sendMessage" text="Skicka" />
-            <Button fx:id="fileChooser" onAction="#attachFile" text="Bifoga fil.." />
+            <Button onAction="#attachFile" text="Bifoga fil.." />
             </HBox>
         </bottom>
         <center>
-            <ScrollPane fx:id="chatScrollPane" fitToHeight="true" fitToWidth="true" styleClass="chat-display">
+            <ScrollPane fitToHeight="true" fitToWidth="true" styleClass="chat-display">
                 <VBox fx:id="messageBox" styleClass="chat-display" />
 
 
