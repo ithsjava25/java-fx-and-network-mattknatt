@@ -5,6 +5,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -48,15 +49,30 @@ public class NtfyConnectionImpl implements NtfyConnection {
     }
 
     @Override
-    public CompletableFuture<Boolean> sendFile(File file) throws FileNotFoundException {
-        HttpRequest httpRequest = HttpRequest.newBuilder()
-                .PUT(HttpRequest.BodyPublishers.ofFile(file.toPath()))
-                .uri(URI.create(hostName + "/mytopic"))
-                .header("Filename", file.getName())
-                .build();
+    public CompletableFuture<Boolean> sendFile(File file) {
+
+        if (file == null || !file.exists()) {
+            return CompletableFuture.failedFuture(
+                    new FileNotFoundException(file == null ? "File is null" : file.getAbsolutePath())
+            );
+        }
+        HttpRequest httpRequest;
+        try {
+             httpRequest = HttpRequest.newBuilder()
+                    .PUT(HttpRequest.BodyPublishers.ofFile(file.toPath()))
+                    .uri(URI.create(hostName + "/mytopic"))
+                    .header("Filename", file.getName())
+                    .build();
+            } catch (IOException e) {
+            return CompletableFuture.failedFuture(e);
+        }
 
         return http.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString())
-                .thenApply(response -> response.statusCode() == 200);
+                .thenApply(response -> response.statusCode() == 200)
+                .exceptionally(e -> {
+                    System.err.println("File upload failed: " + e.getMessage());
+                    return false;
+                });
 
     }
 

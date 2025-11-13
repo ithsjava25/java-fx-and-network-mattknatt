@@ -37,7 +37,7 @@ public class HelloModel {
         return connection.send(getMessageToSend());
     }
 
-    public CompletableFuture<Boolean> sendFile() throws FileNotFoundException {
+    public CompletableFuture<Boolean> sendFile() {
         return connection.sendFile(getAttachedFile());
     }
 
@@ -86,10 +86,11 @@ public class HelloModel {
     }
 
     public String getMessageToSend() {
-        if(getUserName().isEmpty()) {
-            return messageToSend.get();
-        } else
-            return getUserName() + ": " + messageToSend.get();
+       String currentUser = getUserName();
+       if (currentUser == null || currentUser.isBlank()) {
+           return messageToSend.get();
+       }
+       return currentUser + ": " + messageToSend.get();
     }
 
     public StringProperty messageToSendProperty() {

@@ -24,10 +24,12 @@ public class NtfyConnectionSpy implements NtfyConnection {
     }
 
     @Override
-    public CompletableFuture<Boolean> sendFile(File file) throws FileNotFoundException {
+    public CompletableFuture<Boolean> sendFile(File file) {
         this.sentFile = file;
         if (file == null || !file.exists()) {
-            throw new FileNotFoundException("File not found" + file);
+            return CompletableFuture.failedFuture(
+                    new FileNotFoundException("File not found: " + file)
+            );
         }
         return CompletableFuture.completedFuture(true);
     }

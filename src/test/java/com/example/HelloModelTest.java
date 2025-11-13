@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -69,6 +70,12 @@ class HelloModelTest {
         model.setUserName("user");
         model.setMessageToSend("Hello World");
 
+        model.receiveMessage();
+
+        spy.simulateIncomingMessages("user: Hello World");
+
+        assertTrue(model.getMessages().isEmpty());
+
     }
 
     @Test
@@ -114,7 +121,10 @@ class HelloModelTest {
         File missingFile = new File("src/test/resources/missing-file.txt");
         model.setAttachedFile(missingFile);
 
-        assertThrows(FileNotFoundException.class, () -> model.sendFile().join());
+        var future = model.sendFile();
+
+        CompletionException ex = assertThrows(CompletionException.class, future::join);
+        assertInstanceOf(FileNotFoundException.class, ex.getCause());
     }
 
     @Test

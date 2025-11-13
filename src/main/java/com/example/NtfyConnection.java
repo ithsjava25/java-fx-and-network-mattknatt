@@ -11,5 +11,5 @@ public interface NtfyConnection {
 
     public CompletableFuture<Void> receive(Consumer<NtfyMessageDto> messageHandler);
 
-    public CompletableFuture<Boolean> sendFile(File file) throws FileNotFoundException;
+    public CompletableFuture<Boolean> sendFile(File file);
 }
