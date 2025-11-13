@@ -36,10 +36,6 @@ public class NtfyConnectionImpl implements NtfyConnection {
                 .uri(URI.create(hostName + "/mytopic"))
                 .build();
 
-
-            //Todo: handle long blocking send requests to not freeze the JavaFX thread
-            //1. Use thread send message?
-            //2. Use async?
             return http.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString())
                     .thenApply(response -> {
                         int code = response.statusCode();
@@ -76,7 +72,6 @@ public class NtfyConnectionImpl implements NtfyConnection {
                         .map(s ->
                                 mapper.readValue(s, NtfyMessageDto.class))
                         .filter(message -> message.event().equals("message"))
-                        .peek(System.out::println)
                         .forEach(messageHandler));
     }
 
