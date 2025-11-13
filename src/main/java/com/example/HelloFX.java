@@ -10,16 +10,13 @@ public class HelloFX extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+
         FXMLLoader fxmlLoader = new FXMLLoader(HelloFX.class.getResource("hello-view.fxml"));
         Parent root = fxmlLoader.load();
-        Scene scene = new Scene(root, 640, 480);
-        stage.setTitle("Hello MVC");
+        Scene scene = new Scene(root, 720, 480);
+        stage.setTitle("ITHS Instant Messenger");
         stage.setScene(scene);
         stage.show();
-    }
-
-    public static void main(String[] args) {
-        launch();
     }
 
 }
