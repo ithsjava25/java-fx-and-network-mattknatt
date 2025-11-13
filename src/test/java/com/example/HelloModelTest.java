@@ -3,17 +3,13 @@ package com.example;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -96,7 +92,7 @@ class HelloModelTest {
     }
 
     @Test
-    void sendAttachmentToFakeServer(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+    void sendAttachmentToFakeServer(WireMockRuntimeInfo wireMockRuntimeInfo) {
         File testFile = new File("src/test/resources/test.txt");
         var con = new NtfyConnectionImpl("http://localhost:" + wireMockRuntimeInfo.getHttpPort());
         var model = new HelloModel(con);
@@ -170,20 +166,20 @@ class HelloModelTest {
         var model = new HelloModel(spy);
 
         var attachment = new NtfyMessageDto.Attachment(
-                "http://example.com/files/test.jpg",
+                "https://example.com/files/test.jpg",
                 "test.jpg",
                 "image/jpeg"
         );
 
         var dto = new NtfyMessageDto("id1", 10101010L, "message", "mytopic", "File received", attachment);
 
-        spy.receive(m -> model.getMessages().add(dto));
+        model.receiveMessage();
         spy.messageHandler.accept(dto);
 
         assertThat(model.getMessages()).hasSize(1);
         var received = model.getMessages().getFirst();
         assertThat(received.attachment()).isNotNull();
-        assertThat(received.attachment().url()).isEqualTo("http://example.com/files/test.jpg");
+        assertThat(received.attachment().url()).isEqualTo("https://example.com/files/test.jpg");
         assertThat(received.attachment().name()).isEqualTo("test.jpg");
     }
 }

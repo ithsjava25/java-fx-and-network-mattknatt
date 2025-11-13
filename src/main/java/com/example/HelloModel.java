@@ -8,7 +8,6 @@ import javafx.collections.ObservableList;
 
 import java.awt.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.URI;
 import java.util.concurrent.CompletableFuture;
 
@@ -56,7 +55,7 @@ public class HelloModel {
     public CompletableFuture<Void> receiveMessage() {
         CompletableFuture<Void> future = new CompletableFuture<>();
 
-        connection.receive(m -> {
+        CompletableFuture<Void> subscription = connection.receive(m -> {
             try {
                 if(m.message() != null && m.message().startsWith(getUserName() + ": ")) {
                     return;
@@ -75,6 +74,11 @@ public class HelloModel {
             } catch (Exception e) {
                 future.completeExceptionally(e);
             }
+        });
+
+        subscription.exceptionally(e -> {
+            future.completeExceptionally(e);
+            return null;
         });
 
         return future;
