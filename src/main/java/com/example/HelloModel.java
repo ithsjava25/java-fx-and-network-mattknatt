@@ -37,6 +37,9 @@ public class HelloModel {
     }
 
     public CompletableFuture<Boolean> sendFile() {
+        if (attachedFile == null) {
+            return CompletableFuture.completedFuture(false);
+        }
         return connection.sendFile(getAttachedFile());
     }
 
@@ -55,34 +58,46 @@ public class HelloModel {
     public CompletableFuture<Void> receiveMessage() {
         CompletableFuture<Void> future = new CompletableFuture<>();
 
-        CompletableFuture<Void> subscription = connection.receive(m -> {
+        connection.receive(m -> {
             try {
                 if(m.message() != null && m.message().startsWith(getUserName() + ": ")) {
                     return;
                 }
-                if (Platform.isFxApplicationThread()) {
+
+                Runnable addTask = () -> {
                     messages.add(m);
+                    if (!future.isDone()) {
+                        future.complete(null);
+                    }
+
+                };
+
+                if (Platform.isFxApplicationThread()) {
+                    addTask.run();
                 } else {
                     try {
-                        Platform.runLater(() -> messages.add(m));
+                        Platform.runLater(addTask);
                     } catch (IllegalStateException e) {
-                        messages.add(m);
+                        addTask.run();
                     }
                 }
-                // Markera framtiden som klar när första meddelandet tas emot
-                future.complete(null);
+
             } catch (Exception e) {
+                if (!future.isDone()) {
+                    future.completeExceptionally(e);
+                }
+            }
+        }).exceptionally(e -> {
+            if (!future.isDone()) {
                 future.completeExceptionally(e);
             }
-        });
-
-        subscription.exceptionally(e -> {
-            future.completeExceptionally(e);
             return null;
         });
 
         return future;
+
     }
+
 
 
     public ObservableList<NtfyMessageDto> getMessages() {
